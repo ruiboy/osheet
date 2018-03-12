@@ -445,7 +445,7 @@ def main():
   parser.add_argument('--monday', help='starting monday for the week: YYYY-MM-DD', default=monday_default)
   parser.add_argument('--allergy_file', help='csv file of kids and their allergy tags', default='conf/allergy.csv')
   parser.add_argument('--skip_file', help='csv file of kids to ignore', default='conf/skip.csv')
-  parser.add_argument('--term_file', help='csv file of terms, weeks and dates', default='conf/term.csv')
+  parser.add_argument('--term_file', help='csv file of terms and staring dates', default='conf/term.csv')
   parser.add_argument('--debug', help='spew out some debug', action='store_true', default=False)
   args = vars(parser.parse_args())
 
