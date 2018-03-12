@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
-import argparse, csv, os, sys, xlsxwriter
+import argparse, csv, datetime, os, sys, xlsxwriter
 
 # constants
 expected_csv_header = \
-  ['Date', ' "Session"', '', ' "Child"', ' "Parent"', ' "Email"', ' "Emergency contact phone number"', ' "Allergies"']
+  ['Date', ' "Session"', ' "Child"', ' "Parent"', ' "Email"', ' "Emergency contact phone number"', ' "Allergies"']
 
 i_date = 0
 i_session = 1
-i_kid = 3
-i_allergies = 7
+i_kid = 2
+i_allergies = 6
 
 am_session = 'Before school care'
 pm_session = 'After school care'
@@ -17,18 +17,27 @@ allergies_false_positive = ['none', 'nil', 'no', 'nothing', 'n/a']
 
 expected_allergy_conf_header = ['Child', 'Tags']
 expected_skip_conf_header = ['Child', 'When']
+expected_term_conf_header = ['Monday', 'Term']
 
 extra_signin_rows = 25
 total_booking_rows = 75
 total_booking_rows = 75
 
-year = 2018
-term = 1
-week = 6
+conf_date_format = '%Y-%m-%d'
+in_date_format = '%-m/%-d/%Y'
+monday_default = '<next monday from today on>'
 
-# working
+# vars
 allergy_conf = []
 skip_conf = []
+term_conf = []
+
+year = 0
+term = 0
+week = 0
+# 5 dates, mon-fri
+week_dates = []
+
 debug = False
 
 
@@ -51,7 +60,9 @@ def prepare_signin_data(reader, session):
   data = {}
 
   for row in reader:
-    if len(row) == len(expected_csv_header) and tidy(row[i_session]) == session:
+    if len(row) == len(expected_csv_header) \
+        and tidy(row[i_date]) in week_dates \
+        and tidy(row[i_session]) == session:
       kid = flip_name(tidy(row[i_kid]))
       if not skip_kid(kid) and not kid in data:
         data[kid] = kid
@@ -208,16 +219,20 @@ def prepare_booking_data(reader, session):
   # dict of dicts: date -> kid -> allergies
   data = {}
 
+  # add all dates
+  for date in week_dates:
+    data[date] = {}
+
+  # add data for the dates
   for row in reader:
-    if len(row) == len(expected_csv_header) and tidy(row[i_session]) == session:
+    if len(row) == len(expected_csv_header) \
+        and tidy(row[i_date]) in week_dates \
+        and tidy(row[i_session]) == session:
       kid = flip_name(tidy(row[i_kid]))
 
       if not skip_kid(kid):
         date = tidy(row[i_date])
         allergies = tidy(row[i_allergies])
-
-        if not date in data:
-          data[date] = {}
 
         kids = data[date]
         if not kid in kids:
@@ -294,6 +309,63 @@ def make_booking_formats(wb):
 
 
 #######################
+# Week info
+#######################
+
+def get_monday_date_from_arg(monday_str):
+  if monday_str == monday_default:
+    date = datetime.date.today()
+    return date if date.weekday() == 0 else date + datetime.timedelta(7 - date.weekday())
+
+  try:
+    date = datetime.datetime.strptime(monday_str, conf_date_format)
+  except ValueError:
+    error("Is not a date: %s" % monday_str)
+
+  if date.weekday() != 0:
+    error("Is not a monday: %s" % monday_str)
+  else:
+    return date;
+
+
+def set_week_info(monday_date):
+  global year, term, week, week_dates
+  year, term, week = get_year_term_week(monday_date)
+  week_dates = [
+    format_in_date(monday_date),
+    format_in_date(monday_date + datetime.timedelta(1)),
+    format_in_date(monday_date + datetime.timedelta(2)),
+    format_in_date(monday_date + datetime.timedelta(3)),
+    format_in_date(monday_date + datetime.timedelta(4))
+  ]
+  print "Generating for %d term %d, week %s, mon-fri %s" % (year, term, week, week_dates)
+
+
+def get_year_term_week(monday_date):
+  year = monday_date.year
+  date = monday_date
+  weeks_on = 0
+  # move backwards though mondays until we find a term_conf entry
+  while True:
+    date_str = date.strftime(conf_date_format)
+    if debug: print "term_conf: looking %d weeks back for %s" % (weeks_on, date)
+    if date_str in term_conf:
+      term = int(term_conf[date_str][1])
+      week = 1 + weeks_on
+      return year, term, week
+    elif date.year != year:
+      # we've gone back to the start of the year and found nothing in term_conf
+      error("Could not find term and week number for week starting: %s" % monday_date)
+    else:
+      date -= datetime.timedelta(7)
+      weeks_on += 1
+
+
+def format_in_date(date):
+  return date.strftime(in_date_format)
+
+
+#######################
 # Helpers
 #######################
 
@@ -361,36 +433,44 @@ def error(msg):
   sys.exit(1)
 
 
+#######################
+# Main
+#######################
+
 def main():
-  parser = argparse.ArgumentParser(description='Convert OSH care booking csv to sign-in + booking sheets',
+  parser = argparse.ArgumentParser(description='Convert OSH care booking csv to weekly sign-in + booking sheets',
                                    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
   parser.add_argument('--in', help='care booking csv to process', default='in/in.csv')
   parser.add_argument('--out', help='dir for output files', default='out')
+  parser.add_argument('--monday', help='starting monday for the week: YYYY-MM-DD', default=monday_default)
   parser.add_argument('--allergy_file', help='csv file of kids and their allergy tags', default='conf/allergy.csv')
   parser.add_argument('--skip_file', help='csv file of kids to ignore', default='conf/skip.csv')
+  parser.add_argument('--term_file', help='csv file of terms, weeks and dates', default='conf/term.csv')
   parser.add_argument('--debug', help='spew out some debug', action='store_true', default=False)
   args = vars(parser.parse_args())
 
-  working_dir = os.path.dirname(os.path.abspath(__file__))
-
-  csv_file = args['in']
-  out_dir = args['out']
   global debug
   debug = args['debug']
 
-  assert_csv(csv_file)
+  in_file = args['in']
+  assert_csv(in_file)
 
+  out_dir = args['out']
   if os.path.isfile(out_dir):
     error('out dir is an existing file; cowardly refusing to do any work')
   if not os.path.isdir(out_dir):
     os.makedirs(out_dir)
 
-  global allergy_conf, skip_conf
+  global allergy_conf, skip_conf, term_conf
   allergy_conf = load_conf(args['allergy_file'], expected_allergy_conf_header)
   skip_conf = load_conf(args['skip_file'], expected_skip_conf_header)
+  term_conf = load_conf(args['term_file'], expected_term_conf_header)
 
-  make_signin_sheets(csv_file, out_dir)
-  make_booking_sheets(csv_file, out_dir)
+  monday_str = args['monday']
+  set_week_info(get_monday_date_from_arg(monday_str))
+
+  make_signin_sheets(in_file, out_dir)
+  make_booking_sheets(in_file, out_dir)
 
 
 if __name__ == "__main__":

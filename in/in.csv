@@ -1,18 +1,18 @@
-Date," ""Session""",," ""Child"""," ""Parent"""," ""Email"""," ""Emergency contact phone number"""," ""Allergies"""
-3/30/2018," ""Before school care""",," ""First1 Last"""," ""First Last"""," ""fl@example.com"""," ""999999"""," ""bugs"""
-3/30/2018," ""Before school care""",," ""First1 Last"""," ""First Last"""," ""fl@example.com"""," ""999999"""," ""bugs"""
-3/30/2018," ""After school care""",," ""First1 Last"""," ""First Last"""," ""fl@example.com"""," ""999999"""," ""bugs"""
+Date," ""Session"""," ""Child"""," ""Parent"""," ""Email"""," ""Emergency contact phone number"""," ""Allergies"""
+2/26/2018," ""Before school care"""," ""First1 Last"""," ""First Last"""," ""fl@example.com"""," ""999999"""," ""bugs"""
+2/26/2018," ""Before school care"""," ""First1 Last"""," ""First Last"""," ""fl@example.com"""," ""999999"""," ""bugs"""
+2/26/2018," ""After school care"""," ""First1 Last"""," ""First Last"""," ""fl@example.com"""," ""999999"""," ""bugs"""
 
-3/30/2018," ""Before school care""",," ""First2 Last"""," ""First Last"""," ""fl@example.com"""," ""999999"""," """""
-3/31/2018," ""Before school care""",," ""First3 Last"""," ""First Last"""," ""fl@example.com"""," ""999999"""," """""
+2/27/2018," ""Before school care"""," ""First2 Last"""," ""First Last"""," ""fl@example.com"""," ""999999"""," """""
+2/27/2018," ""Before school care"""," ""First3 Last"""," ""First Last"""," ""fl@example.com"""," ""999999"""," """""
 
-3/31/2018," ""Before school care""",," ""First ZLast"""," ""First Last"""," ""fl@example.com"""," ""999999"""," """""
-3/31/2018," ""Before school care""",," ""First ALast"""," ""First Last"""," ""fl@example.com"""," ""999999"""," """""
+2/28/2018," ""Before school care"""," ""First ZLast"""," ""First Last"""," ""fl@example.com"""," ""999999"""," """""
+2/28/2018," ""Before school care"""," ""First ALast"""," ""First Last"""," ""fl@example.com"""," ""999999"""," """""
 
-4/1/2018," ""Before school care""",," ""First ALast"""," ""First Last"""," ""fl@example.com"""," ""999999"""," """""
+3/1/2018," ""Before school care"""," ""First ALast"""," ""First Last"""," ""fl@example.com"""," ""999999"""," """""
 
-4/1/2018," ""Before school care""",," ""First_Allergy Last"""," ""First Last"""," ""fl@example.com"""," ""999999"""," """""
-4/1/2018," ""After school care""",," ""First_Allergy Last"""," ""First Last"""," ""fl@example.com"""," ""999999"""," """""
+3/1/2018," ""Before school care"""," ""First_Allergy Last"""," ""First Last"""," ""fl@example.com"""," ""999999"""," """""
+3/1/2018," ""After school care"""," ""First_Allergy Last"""," ""First Last"""," ""fl@example.com"""," ""999999"""," """""
 
-4/1/2018," ""Before school care""",," ""First_Skip Last"""," ""First Last"""," ""fl@example.com"""," ""999999"""," """""
-4/1/2018," ""After school care""",," ""First_Skip Last"""," ""First Last"""," ""fl@example.com"""," ""999999"""," """""
+3/1/2018," ""Before school care"""," ""First_Skip Last"""," ""First Last"""," ""fl@example.com"""," ""999999"""," """""
+3/1/2018," ""After school care"""," ""First_Skip Last"""," ""First Last"""," ""fl@example.com"""," ""999999"""," """""
