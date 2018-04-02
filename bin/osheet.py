@@ -25,7 +25,7 @@ total_booking_rows = 75
 
 conf_date_format = '%Y-%m-%d'
 in_date_format = '%-m/%-d/%Y'
-monday_default = '<next monday from today on>'
+monday_default = '<next monday from today, inclusive>'
 
 # vars
 allergy_conf = []
@@ -77,7 +77,7 @@ def write_am_signin_sheet(out_dir, data):
   ws = wb.add_worksheet()
   formats = make_signin_formats(wb)
 
-  print 'Writing: %s' % out_file
+  print 'Writing signin sheet : %s, kids: %d' % (out_file, len(data))
 
   ws.set_column(0, 0, 20)
   ws.set_column(1, 16, 5)
@@ -115,7 +115,7 @@ def write_pm_signin_sheet(out_dir, data):
   ws = wb.add_worksheet()
   formats = make_signin_formats(wb)
 
-  print 'Writing: %s' % out_file
+  print 'Writing signin sheet : %s, kids: %d' % (out_file, len(data))
 
   ws.set_column(0, 0, 20)
   ws.set_column(1, 16, 5)
@@ -248,7 +248,7 @@ def write_booking_sheet(out_dir, out_file_name, label, data):
   ws = wb.add_worksheet()
   formats = make_booking_formats(wb)
 
-  print 'Writing: %s' % out_file
+  print 'Writing booking sheet: %s, bookings: %d' % (out_file, sum(len(v) for v in data.itervalues()))
 
   # set col widths
   small, big = 5, 20
@@ -338,7 +338,7 @@ def set_week_info(monday_date):
     format_in_date(monday_date + datetime.timedelta(3)),
     format_in_date(monday_date + datetime.timedelta(4))
   ]
-  print "Generating for %d term %d, week %s, mon-fri %s" % (year, term, week, week_dates)
+  print "Generating for year %d, term %d, week %s, Mon-Fri dates %s" % (year, term, week, week_dates)
 
 
 def get_year_term_week(monday_date):
