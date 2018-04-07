@@ -24,7 +24,7 @@ total_booking_rows = 75
 total_booking_rows = 75
 
 conf_date_format = '%Y-%m-%d'
-in_date_format = '%-m/%-d/%Y'
+in_date_format = '%m/%d/%Y'
 monday_default = '<next monday from today, inclusive>'
 
 # vars
@@ -275,10 +275,10 @@ def write_booking_sheet(out_dir, out_file_name, label, data):
 
   # write in the data
   col = 1
-  for date, kids in sorted(data.iteritems()):
+  for date, kids in sorted(data.items(), key=lambda x: datetime.datetime.strptime(x[0], in_date_format)):
     ws.write(2, col, date, formats['th2'])
     row = 3
-    for kid, allergies in sorted(kids.iteritems()):
+    for kid, allergies in sorted(kids.items()):
       ws.write(row, col, kid, formats['tdAllergies' if has_allergies(kid, allergies) else 'td'])
       tag = get_allergy_tag(kid)
       if tag:
@@ -362,7 +362,8 @@ def get_year_term_week(monday_date):
 
 
 def format_in_date(date):
-  return date.strftime(in_date_format)
+  # format and remove leading 0 on month and day
+  return date.strftime(in_date_format).lstrip('0').replace('/0', '/')
 
 
 #######################
