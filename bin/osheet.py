@@ -378,10 +378,14 @@ def assert_csv(in_csv_file):
 
   with open(in_csv_file, 'rb') as in_file:
     reader = new_csv_reader(in_file)
+    header = True
     for row in reader:
-      if row != expected_csv_header:
-        error('Unexpected csv header.\n Expected:%s\n Got:     %s' % (expected_csv_header, row))
-      return
+      if header:
+        if row != expected_csv_header:
+          error('Unexpected csv header.\n Expected:%s\n Got:     %s' % (expected_csv_header, row))
+        header = False
+      elif not tidy(row[i_kid]):
+        error('Missing kid name in row: %s' % row)
 
 
 def new_csv_reader(in_file):
