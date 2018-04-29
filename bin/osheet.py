@@ -79,6 +79,10 @@ def write_am_signin_sheet(out_dir, data):
 
   print 'Writing signin sheet : %s, kids: %d' % (out_file, len(data))
 
+  ws.set_landscape()
+  ws.fit_to_pages(1, 0)
+  ws.repeat_rows(2, 3)
+
   ws.set_column(0, 0, 20)
   ws.set_column(1, 16, 5)
 
@@ -116,6 +120,10 @@ def write_pm_signin_sheet(out_dir, data):
   formats = make_signin_formats(wb)
 
   print 'Writing signin sheet : %s, kids: %d' % (out_file, len(data))
+
+  ws.set_landscape()
+  ws.fit_to_pages(1, 0)
+  ws.repeat_rows(2, 3)
 
   ws.set_column(0, 0, 20)
   ws.set_column(1, 16, 5)
@@ -249,6 +257,10 @@ def write_booking_sheet(out_dir, out_file_name, label, data):
   formats = make_booking_formats(wb)
 
   print 'Writing booking sheet: %s, bookings: %d' % (out_file, sum(len(v) for v in data.itervalues()))
+
+  ws.set_landscape()
+  ws.fit_to_pages(1, 0)
+  ws.repeat_rows(2)
 
   # set col widths
   small, big = 5, 20
